@@ -6,8 +6,8 @@ app_name = 'blog'
 
 urlpatterns = [
     path('', blog_view, name='blog'),
-    path('blog-single/', blog_single_view, name='blog_single'),
-    
+    path('<int:pid>', blog_single_view, name='blog_single'),
+    #path('<int:pid>', test, name='test'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
