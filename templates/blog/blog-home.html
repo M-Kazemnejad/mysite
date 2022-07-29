@@ -97,18 +97,23 @@
 					<!-- tags field-->
 					<div class="col-lg-3  col-md-3 meta-details">
 						<ul class="tags">
-							<li><a href="#">Food,</a></li>
-							<li><a href="#">Technology,</a></li>
-							<li><a href="#">Politics,</a></li>
-							<li><a href="#">Lifestyle</a></li>
+
+							{% for cat in post.category_id.all %}
+							<li><a href="#">{{cat.name}}</a></li>
+							{% if not forloop.last %} , {% endif %}
+							{% endfor %}
+
+							<!--
+								{{ post.category_id.all|join:"," }}-->
 						</ul>
 						<div class="user-details row">
 							<!-- author field-->
-							<p class="user-name col-lg-12 col-md-12 col-6"><a href="#">{{post.author.get_full_name}}</a> <span
-									class="lnr lnr-user"></span></p>
+							<p class="user-name col-lg-12 col-md-12 col-6"><a href="#">{{post.author.get_full_name}}</a>
+								<span class="lnr lnr-user"></span>
+							</p>
 							<!-- published date field-->
-							<p class="date col-lg-12 col-md-12 col-6"><a href="#">{{post.published_date}}</a> <span
-									class="lnr lnr-calendar-full"></span></p>
+							<p class="date col-lg-12 col-md-12 col-6"><a href="#">{{post.published_date|date:"d M
+									Y"}}</a> <span class="lnr lnr-calendar-full"></span></p>
 							<!-- counted view field-->
 							<p class="view col-lg-12 col-md-12 col-6"><a href="#">{{post.counted_views}} Views</a> <span
 									class="lnr lnr-eye"></span></p>
@@ -120,15 +125,15 @@
 					<div class="col-lg-9 col-md-9 ">
 						<!-- image field-->
 						<div class="feature-img">
-							<img class="img-fluid" src="{% static 'img/blog/feature-img1.jpg' %}" alt="">
+							<img class="img-fluid" src="{{post.image.url}}" alt="">
 						</div>
 						<!-- post title -->
-						<a class="posts-title" href="blog-single.html">
+						<a class="posts-title" href="{% url 'blog:blog_single' pid=post.id %}">
 							<h3> {{post.title}}</h3>
 						</a>
 						<!-- post content -->
 						<p class="excert">
-							{{post.content}}
+							{{post.content|truncatewords:75}}
 						</p>
 						<a href="{% url 'blog:blog_single' pid=post.id %}" class="primary-btn">View More</a>
 					</div>
@@ -161,6 +166,7 @@
 				</nav>
 			</div>
 			<div class="col-lg-4 sidebar-widgets">
+
 				<div class="widget-wrap">
 					<div class="single-sidebar-widget search-widget">
 						<form class="search-form" action="#">
@@ -170,9 +176,9 @@
 						</form>
 					</div>
 					<div class="single-sidebar-widget user-info-widget">
-						<img src="{% static 'img/blog/user-info.png" alt="">
+						<img src="{% static 'img/blog/user-info.png' %}" alt="">
 						<a href="#">
-							<h4>Charlie Barber</h4>
+							<h4>Mohamad Zaman kazemnejad</h4>
 						</a>
 						<p>
 							Senior blog writer
