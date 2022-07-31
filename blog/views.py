@@ -25,3 +25,5 @@ def blog_single_view(request, pid):
     posts_filtered = get_object_or_404(Post, id = pid, status = 1) 
     context = {'post':posts_filtered , 'prev_post' : prev_post, 'next_post' : next_post }
     return render(request, 'blog/blog-single.html', context)
+
+
