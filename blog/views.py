@@ -1,12 +1,30 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from blog.models import Post
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
-def blog_view(request):
-    posts = Post.objects.all()
+def blog_view(request, **kwargs):
+    posts = Post.objects.filter(status=1)
+    if kwargs.get('cat_name'):
+        posts = posts.filter(category_id__name=kwargs['cat_name'])
+    if kwargs.get('author_username'):
+        posts = posts.filter(author__username=kwargs['author_username'])
+
+    paginator = Paginator(posts, 3)
+    page_number = request.GET.get('page')
+    try:
+        posts = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        posts = paginator.get_page(1)
+    except EmptyPage:
+        posts = paginator.get_page(paginator.num_pages)
     context = {'posts': posts}
     return render(request, 'blog/blog-home.html', context)
+
+
+
+
 
 def blog_single_view(request, pid):
     prev_post = next_post = 0
@@ -27,3 +45,10 @@ def blog_single_view(request, pid):
     return render(request, 'blog/blog-single.html', context)
 
 
+def search_view(request):
+    posts = Post.objects.filter(status=1)
+    #print(request.GET.get('q'))
+    if request.method == 'GET':
+        posts = posts.filter(content__contains=request.GET.get('q'))
+    context = {'posts': posts}
+    return render(request, 'blog/blog-home.html', context)

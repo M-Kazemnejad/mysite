@@ -100,7 +100,7 @@
 						<ul class="tags">
 
 							{% for cat in post.category_id.all %}
-							<li><a href="#">{{cat.name}}</a></li>
+							<li><a href="{% url 'blog:blog_category' cat_name=cat.name %}">{{cat.name}}</a></li>
 							{% if not forloop.last %} , {% endif %}
 							{% endfor %}
 
@@ -113,8 +113,10 @@
 								<span class="lnr lnr-user"></span>
 							</p>
 							<!-- published date field-->
-							<p class="date col-lg-12 col-md-12 col-6"><a href="#">{{post.published_date|date:"d M
-									Y"}}</a> <span class="lnr lnr-calendar-full"></span></p>
+							<p class="date col-lg-12 col-md-12 col-6">
+								<a href="#">
+								{{post.published_date|date:"d M Y"}}
+								</a> <span class="lnr lnr-calendar-full"></span></p>
 							<!-- counted view field-->
 							<p class="view col-lg-12 col-md-12 col-6"><a href="#">{{post.counted_views}} Views</a> <span
 									class="lnr lnr-eye"></span></p>
@@ -144,25 +146,31 @@
 
 				<nav class="blog-pagination justify-content-center d-flex">
 					<ul class="pagination">
-						<li class="page-item">
-							<a href="#" class="page-link" aria-label="Previous">
-								<span aria-hidden="true">
-									<span class="lnr lnr-chevron-left"></span>
-								</span>
-							</a>
-						</li>
-						<li class="page-item"><a href="#" class="page-link">01</a></li>
-						<li class="page-item active"><a href="#" class="page-link">02</a></li>
-						<li class="page-item"><a href="#" class="page-link">03</a></li>
-						<li class="page-item"><a href="#" class="page-link">04</a></li>
-						<li class="page-item"><a href="#" class="page-link">09</a></li>
-						<li class="page-item">
-							<a href="#" class="page-link" aria-label="Next">
-								<span aria-hidden="true">
-									<span class="lnr lnr-chevron-right"></span>
-								</span>
-							</a>
-						</li>
+						{% if posts.has_previous %}
+							<li class="page-item">
+								<a href="?page={{posts.previous_page_number}}" class="page-link" aria-label="Previous">
+									<span aria-hidden="true">
+										<span class="lnr lnr-chevron-left"></span>
+									</span>
+								</a>
+							</li>
+						{% endif %}
+						{% for i in posts.paginator.page_range  %}
+							{% if posts.number == i %}
+								<li class="page-item active"><a href="?page={{i}}" class="page-link">{{i}}</a></li>
+							{% else%}
+								<li class="page-item"><a href="?page={{i}}" class="page-link">{{i}}</a></li>
+							{% endif%}
+						{% endfor %}
+						{% if posts.has_next %}
+							<li class="page-item">
+								<a href="?page={{posts.next_page_number}}" class="page-link" aria-label="Next">
+									<span aria-hidden="true">
+										<span class="lnr lnr-chevron-right"></span>
+									</span>
+								</a>
+							</li>
+						{% endif %}
 					</ul>
 				</nav>
 			</div>
@@ -178,7 +186,7 @@
 
 					{% include 'blog/blog-ads.html' %}
 					
-					{% include 'blog/blog-post-category.html' %}
+					{% post_category %}
 
 					<div class="single-sidebar-widget newsletter-widget">
 						<h4 class="newsletter-title">Newsletter</h4>
